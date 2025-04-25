@@ -2,29 +2,46 @@ import React, { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
 import { Box, Typography } from "@mui/material";
 import SvgGridBoxes from "./SvgGridBoxes";
+import CharacterGrid from "./CharacterGrid";
+
+
 
 function CharacterPractice({ character }) {
   const characterContainerRef = useRef(null);
   const fanningContainerRef = useRef(null);
-  const [writer, setWriter] = useState(null);
 
   useEffect(() => {
-    if (characterContainerRef.current) {
-      characterContainerRef.current.innerHTML = "";
-      const writerInstance = HanziWriter.create(
-        characterContainerRef.current,
-        character,
-        {
-          width: 120,
-          height: 120,
-          padding: 5,
-          showOutline: true,
-          strokeAnimationSpeed: 1,
-          delayBetweenStrokes: 300,
-          showCharacter: true,
-        }
-      );
-      setWriter(writerInstance);
+    const target = characterContainerRef.current;
+    if (target) {
+      target.innerHTML = ""; // Clear previous content
+
+      HanziWriter.loadCharacterData(character).then(function (charData) {
+        const svg = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
+        svg.style.width = "180px";
+        svg.style.height = "180px";
+        target.appendChild(svg);
+        const group = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "g"
+        );
+
+        const transformData = HanziWriter.getScalingTransform(180, 180);
+        group.setAttributeNS(null, "transform", transformData.transform);
+        svg.appendChild(group);
+
+        charData.strokes.forEach(function (strokePath) {
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          path.setAttributeNS(null, "d", strokePath);
+          path.style.fill = "#000000"; // Set fill color to black
+          group.appendChild(path);
+        });
+      });
     }
   }, [character]);
 
@@ -93,7 +110,7 @@ function CharacterPractice({ character }) {
         sx={{
           width: "95%",
           height: "95%",
-          border: "1px solid blue",
+          border: "1px solid black",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -132,11 +149,15 @@ function CharacterPractice({ character }) {
 
         {/* Practice area below */}
         <Box
-          sx={{ display: "flex", height: "100mm", border: "1px solid gray" }}
+          sx={{
+            display: "flex",
+            height: "100mm",
+            borderBottom: "1px solid black",
+          }}
         >
           {/* Left Column */}
           <Box sx={{ flex: 1, padding: 1, borderRight: "1px solid black" }}>
-            Luyện Viết
+            Tìm từ
           </Box>
           {/* Right Column (with two rows) */}
           <Box sx={{ flex: 2, display: "flex", flexDirection: "column" }}>
@@ -149,7 +170,6 @@ function CharacterPractice({ character }) {
           </Box>
         </Box>
 
-        <Box sx={{ flex: 1, padding: 1, borderBottom: "1px solid black" }} />
         <Box
           sx={{
             height: "fit-content",
@@ -168,29 +188,19 @@ function CharacterPractice({ character }) {
               justifyContent: "center",
             }}
           >
-            {Array(10)
-              .fill()
-              .map((_, i) => (
-                <Box
-                  key={i}
-                  sx={{
-                    width: 60,
-                    height: 60,
-                    border: "1px solid #aaa",
-                  }}
-                />
-              ))}
+            <CharacterGrid character={character} />
+            <CharacterGrid character={character} />
           </Box>
         </Box>
         <Box
           sx={{
             height: "fit-content",
-            borderBottom: "1px solid black",
             padding: 1,
             paddingBottom: 5,
           }}
         >
           <Typography variant="subtitle1">Tập Viết</Typography>
+          <SvgGridBoxes />
           <SvgGridBoxes />
         </Box>
       </Box>
