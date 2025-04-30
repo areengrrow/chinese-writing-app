@@ -4,11 +4,50 @@ import { Box, Typography } from "@mui/material";
 import SvgGridBoxes from "./SvgGridBoxes";
 import CharacterGrid from "./CharacterGrid";
 
-
-
-function CharacterPractice({ character }) {
+function CharacterPractice({ character, relatives }) {
   const characterContainerRef = useRef(null);
   const fanningContainerRef = useRef(null);
+  const searchingContainerRef = useRef(null);
+
+  console.log(relatives);
+  //use this array to display chracter
+  useEffect(() => {
+    const searchingContainer = searchingContainerRef.current;
+    if (searchingContainer && relatives) {
+      searchingContainer.innerHTML = "";
+
+      relatives.forEach((relativeChar) => {
+        const charContainer = document.createElement("div");
+        charContainer.style.width = "30px";
+        charContainer.style.height = "30px";
+        searchingContainer.appendChild(charContainer);
+
+        HanziWriter.loadCharacterData(relativeChar).then((charData) => {
+          const svg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+          );
+          charContainer.appendChild(svg);
+          const group = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "g"
+          );
+          const transformData = HanziWriter.getScalingTransform(30, 30); // Use container dimensions
+          group.setAttributeNS(null, "transform", transformData.transform);
+          svg.appendChild(group);
+          charData.strokes.forEach((strokePath) => {
+            const path = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path"
+            );
+            path.setAttributeNS(null, "d", strokePath);
+            path.style.fill = "#000000";
+            group.appendChild(path);
+          });
+        });
+      });
+    }
+  }, [relatives]);
 
   useEffect(() => {
     const target = characterContainerRef.current;
@@ -157,7 +196,21 @@ function CharacterPractice({ character }) {
         >
           {/* Left Column */}
           <Box sx={{ flex: 1, padding: 1, borderRight: "1px solid black" }}>
-            Tìm từ
+            <Typography variant="subtitle1">Tìm Từ</Typography>
+            <Box
+              ref={searchingContainerRef}
+              sx={{
+                flex: 1,
+                padding: 1,
+                display: "grid", // Changed to grid
+                gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))", // Define grid columns
+                gap: 2, // Add gap between grid items
+                alignItems: "center", // Vertically align items in the grid cells
+                justifyContent: "center", // Center content horizontally
+              }}
+            >
+              {/* Relatives will be rendered here */}
+            </Box>
           </Box>
           {/* Right Column (with two rows) */}
           <Box sx={{ flex: 2, display: "flex", flexDirection: "column" }}>
