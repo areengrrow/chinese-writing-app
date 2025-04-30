@@ -5,12 +5,17 @@ import CommonCharacterList from "./components/CommonCharacterList";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import "./App.css";
+import { WORDS } from "./components/Words";
+import { PINYINS } from "./components/Pinyins";
 
 function App() {
-  const [character, setCharacter] = useState("號");
-  const [uploadedCharacters, setUploadedCharacters] = useState([]);
+  const initChar = WORDS[10]
+  const initPinyin = PINYINS[10]
+  const [character, setCharacter] = useState(initChar);
+  const [pinyin, setPinyin] = useState(initPinyin);
   const [relatives, setRelatives] = useState([]);
 
+  console.log(WORDS)
   const commonCharacters = [
     "你",
     "好",
@@ -63,17 +68,18 @@ function App() {
   const getRelatives = (selectedChar) => {
     let result = [];
 
-    if (uploadedCharacters.length === 0) {
+    if (WORDS.length === 0) {
       const set = new Set(tempRelatives);
       set.add(selectedChar);
       result = Array.from(set);
       result = [...result, selectedChar, selectedChar].slice(0, 21); // Limit to 21 characters
     } else {
-      const index = uploadedCharacters.indexOf(selectedChar);
+      const index = WORDS.indexOf(selectedChar);
+      setPinyin(PINYINS[index])
       if (index === -1) return [];
       const start = Math.max(0, index - 10);
-      const end = Math.min(uploadedCharacters.length, index + 11);
-      result = uploadedCharacters.slice(start, end);
+      const end = Math.min(WORDS.length, index + 11);
+      result = WORDS.slice(start, end);
 
       while (result.filter((char) => char === selectedChar).length < 3) {
         result.push(selectedChar);
@@ -123,23 +129,10 @@ function App() {
     pdf.save(`character-practice-${character}-stretched.pdf`);
   };
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target.result;
-      const chars = Array.from(new Set(text.replace(/\s/g, "").split("")));
-      setUploadedCharacters(chars);
-    };
-    reader.readAsText(file);
-  };
-
   return (
     <Box className="App">
       <Box ref={characterPracticeRef} className="practice-container">
-        <CharacterPractice character={character} relatives={relatives} />
+        <CharacterPractice character={character} pinyin={pinyin} relatives={relatives} />
       </Box>
 
       <CommonCharacterList
@@ -169,44 +162,7 @@ function App() {
         >
           Generate PDF
         </button>
-
-        <label
-          htmlFor="file-upload"
-          className="action-button"
-          style={{
-            marginLeft: "10px",
-            display: "inline-block",
-            cursor: "pointer",
-            padding: "10px 20px",
-            backgroundColor: "#f0f0f0",
-            color: "#333",
-            borderRadius: "5px",
-            border: "1px",
-            textAlign: "center",
-            fontSize: "16px",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            transition: "background-color 0.3s, transform 0.2s",
-            border: "2px solid #333",
-          }}
-        >
-          Upload .txt
-        </label>
-
-        <input
-          id="file-upload"
-          className="action-button"
-          type="file"
-          accept=".txt"
-          onChange={handleFileUpload}
-          style={{ display: "none" }}
-        />
       </Box>
-
-      {uploadedCharacters.length > 0 && (
-        <Box sx={{ marginTop: 2, fontSize: "14px", color: "#555" }}>
-          ✅ Uploaded {uploadedCharacters.length} unique characters
-        </Box>
-      )}
     </Box>
   );
 }

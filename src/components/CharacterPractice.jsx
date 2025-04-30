@@ -4,7 +4,7 @@ import { Box, Typography } from "@mui/material";
 import SvgGridBoxes from "./SvgGridBoxes";
 import CharacterGrid from "./CharacterGrid";
 
-function CharacterPractice({ character, relatives }) {
+function CharacterPractice({ character, pinyin, relatives }) {
   const characterContainerRef = useRef(null);
   const fanningContainerRef = useRef(null);
   const searchingContainerRef = useRef(null);
@@ -53,36 +53,45 @@ function CharacterPractice({ character, relatives }) {
     const target = characterContainerRef.current;
     if (target) {
       target.innerHTML = ""; // Clear previous content
-
+  
       HanziWriter.loadCharacterData(character).then(function (charData) {
-        const svg = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "svg"
-        );
+        // Create container for pinyin and SVG
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.flexDirection = "column";
+        wrapper.style.alignItems = "center";
+  
+        // Create and append pinyin div
+        const pinyinDiv = document.createElement("div");
+        pinyinDiv.innerText = pinyin;
+        pinyinDiv.style.fontSize = "20px";
+        pinyinDiv.style.marginBottom = "4px";
+        pinyinDiv.style.fontWeight = "bold";
+        wrapper.appendChild(pinyinDiv);
+  
+        // Create and append SVG
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.style.width = "180px";
         svg.style.height = "180px";
-        target.appendChild(svg);
-        const group = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "g"
-        );
-
+  
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
         const transformData = HanziWriter.getScalingTransform(180, 180);
         group.setAttributeNS(null, "transform", transformData.transform);
         svg.appendChild(group);
-
+  
         charData.strokes.forEach(function (strokePath) {
-          const path = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "path"
-          );
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           path.setAttributeNS(null, "d", strokePath);
           path.style.fill = "#000000"; // Set fill color to black
           group.appendChild(path);
         });
+  
+        wrapper.appendChild(svg);
+        target.appendChild(wrapper);
       });
     }
   }, [character]);
+  
 
   useEffect(() => {
     if (fanningContainerRef.current) {
@@ -196,7 +205,7 @@ function CharacterPractice({ character, relatives }) {
         >
           {/* Left Column */}
           <Box sx={{ flex: 1, padding: 1, borderRight: "1px solid black" }}>
-            <Typography variant="subtitle1">Tìm Từ</Typography>
+            <Typography variant="subtitle1">Tìm Từ {character} </Typography>
             <Box
               ref={searchingContainerRef}
               sx={{
