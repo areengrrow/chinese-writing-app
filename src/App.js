@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
+import { Box } from "@mui/material"; // Importing Box component
 import CharacterPractice from "./components/CharacterPractice";
 import CommonCharacterList from "./components/CommonCharacterList";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-
 import "./App.css";
 
 function App() {
@@ -64,36 +64,28 @@ function App() {
     let result = [];
 
     if (uploadedCharacters.length === 0) {
-      // Combine tempRelatives and selectedChar, ensuring it's added 3 times
       const set = new Set(tempRelatives);
       set.add(selectedChar);
       result = Array.from(set);
-
-      // Ensure the selectedChar appears exactly 3 times
       result = [...result, selectedChar, selectedChar].slice(0, 21); // Limit to 21 characters
     } else {
       const index = uploadedCharacters.indexOf(selectedChar);
       if (index === -1) return [];
-
       const start = Math.max(0, index - 10);
       const end = Math.min(uploadedCharacters.length, index + 11);
       result = uploadedCharacters.slice(start, end);
 
-      // Add selectedChar 2 more times to make 3 times in total
       while (result.filter((char) => char === selectedChar).length < 3) {
         result.push(selectedChar);
       }
 
-      // Shuffle the result before returning
       for (let i = result.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [result[i], result[j]] = [result[j], result[i]];
       }
 
-      // Ensure we have exactly 21 characters
       result = result.slice(0, 21);
     }
-
     return result;
   };
 
@@ -145,10 +137,10 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <div ref={characterPracticeRef} className="practice-container">
+    <Box className="App">
+      <Box ref={characterPracticeRef} className="practice-container">
         <CharacterPractice character={character} relatives={relatives} />
-      </div>
+      </Box>
 
       <CommonCharacterList
         characters={commonCharacters}
@@ -157,8 +149,24 @@ function App() {
         onAddCustom={addCustomCharacter}
       />
 
-      <div style={{ marginTop: "20px" }}>
-        <button className="action-button" onClick={generatePDF}>
+      <Box sx={{ marginTop: 2 }}>
+        <button
+          className="action-button"
+          onClick={generatePDF}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#f0f0f0",
+            color: "#333",
+            borderRadius: "5px",
+            textAlign: "center",
+            fontSize: "16px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            transition: "background-color 0.3s, transform 0.2s",
+            width: "auto",
+            display: "inline-block",
+            border: "2px solid #333",
+          }}
+        >
           Generate PDF
         </button>
 
@@ -169,25 +177,37 @@ function App() {
             marginLeft: "10px",
             display: "inline-block",
             cursor: "pointer",
+            padding: "10px 20px",
+            backgroundColor: "#f0f0f0",
+            color: "#333",
+            borderRadius: "5px",
+            border: "1px",
+            textAlign: "center",
+            fontSize: "16px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            transition: "background-color 0.3s, transform 0.2s",
+            border: "2px solid #333",
           }}
         >
           Upload .txt
         </label>
+
         <input
           id="file-upload"
+          className="action-button"
           type="file"
           accept=".txt"
           onChange={handleFileUpload}
           style={{ display: "none" }}
         />
-      </div>
+      </Box>
 
       {uploadedCharacters.length > 0 && (
-        <div style={{ marginTop: "10px", fontSize: "14px", color: "#555" }}>
+        <Box sx={{ marginTop: 2, fontSize: "14px", color: "#555" }}>
           ✅ Uploaded {uploadedCharacters.length} unique characters
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 
