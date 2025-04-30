@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/chinese-writing-app/static/css/main.4460e70f.css",
-    "main.js": "/chinese-writing-app/static/js/main.83e8c165.js",
+    "main.js": "/chinese-writing-app/static/js/main.7f137da6.js",
     "static/js/977.54427edc.chunk.js": "/chinese-writing-app/static/js/977.54427edc.chunk.js",
     "static/js/732.655fa1eb.chunk.js": "/chinese-writing-app/static/js/732.655fa1eb.chunk.js",
     "static/js/453.4b4c78db.chunk.js": "/chinese-writing-app/static/js/453.4b4c78db.chunk.js",
     "index.html": "/chinese-writing-app/index.html",
     "main.4460e70f.css.map": "/chinese-writing-app/static/css/main.4460e70f.css.map",
-    "main.83e8c165.js.map": "/chinese-writing-app/static/js/main.83e8c165.js.map",
+    "main.7f137da6.js.map": "/chinese-writing-app/static/js/main.7f137da6.js.map",
     "977.54427edc.chunk.js.map": "/chinese-writing-app/static/js/977.54427edc.chunk.js.map",
     "732.655fa1eb.chunk.js.map": "/chinese-writing-app/static/js/732.655fa1eb.chunk.js.map",
     "453.4b4c78db.chunk.js.map": "/chinese-writing-app/static/js/453.4b4c78db.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.4460e70f.css",
-    "static/js/main.83e8c165.js"
+    "static/js/main.7f137da6.js"
   ]
 }
